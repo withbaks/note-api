@@ -1,0 +1,19 @@
+[project]
+name = "note-queue"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "note-core",
+    "arq>=0.26",
+    "redis>=5.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/note_queue"]
+
+[tool.uv.sources]
+note-core = { workspace = true }

@@ -1,0 +1,85 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: note
+      POSTGRES_PASSWORD: note
+      POSTGRES_DB: note
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U note -d note"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6380:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: api
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://note:note@postgres:5432/note
+      DATABASE_URL_SYNC: postgresql://note:note@postgres:5432/note
+      REDIS_URL: redis://redis:6379/0
+      JWT_SECRET: dev-secret-change-in-production
+      ENVIRONMENT: development
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: ["uvicorn", "note_api.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: worker
+    environment:
+      DATABASE_URL: postgresql+asyncpg://note:note@postgres:5432/note
+      DATABASE_URL_SYNC: postgresql://note:note@postgres:5432/note
+      REDIS_URL: redis://redis:6379/0
+      JWT_SECRET: dev-secret-change-in-production
+      ENVIRONMENT: development
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: ["python", "-m", "note_worker.main"]
+
+  worker-batch:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: worker
+    environment:
+      DATABASE_URL: postgresql+asyncpg://note:note@postgres:5432/note
+      DATABASE_URL_SYNC: postgresql://note:note@postgres:5432/note
+      REDIS_URL: redis://redis:6379/0
+      JWT_SECRET: dev-secret-change-in-production
+      ENVIRONMENT: development
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: ["python", "-m", "note_worker.batch"]
+
+volumes:
+  postgres_data:

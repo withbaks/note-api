@@ -1,0 +1,5 @@
+{"memory_text": "Call me at 09061281792", "helper_key": "is_phone_number", "expected_status": "accepted"}
+{"memory_text": "Joshua's shoe size is 12", "helper_key": "is_shoe_size", "expected_status": "accepted"}
+{"memory_text": "My mum is 78 years old", "helper_key": "is_age", "expected_status": "accepted"}
+{"memory_text": "Victor might be related to the Lagos trip somehow", "helper_key": "connection", "expected_status": "review"}
+{"memory_text": "Maybe dad likes jazz?", "helper_key": "preference", "expected_status": "review"}

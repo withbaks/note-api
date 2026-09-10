@@ -1,0 +1,58 @@
+[project]
+name = "note-api-workspace"
+version = "0.1.0"
+description = "Memory app backend monorepo"
+requires-python = ">=3.12"
+dependencies = []
+
+[tool.uv.workspace]
+members = [
+    "packages/core",
+    "packages/db",
+    "packages/queue",
+    "services/auth",
+    "services/users",
+    "services/memory",
+    "services/helpers",
+    "services/categorization",
+    "services/search",
+    "services/sync",
+    "services/ai",
+    "services/notifications",
+    "services/social",
+    "services/ingestion",
+    "services/admin",
+    "apps/api",
+    "apps/worker",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.24",
+    "httpx>=0.28",
+    "ruff>=0.8",
+    "email-validator>=2.0",
+]
+
+[tool.pytest.ini_options]
+pythonpath = [
+    "packages/core/src",
+    "packages/db/src",
+    "packages/queue/src",
+    "services/ai/src",
+    "services/auth/src",
+    "services/users/src",
+    "services/memory/src",
+    "services/sync/src",
+    "services/helpers/src",
+    "services/categorization/src",
+    "services/search/src",
+    "services/notifications/src",
+    "services/social/src",
+    "services/ingestion/src",
+    "services/admin/src",
+    "apps/api/src",
+    "apps/worker/src",
+]
+testpaths = ["tests"]
